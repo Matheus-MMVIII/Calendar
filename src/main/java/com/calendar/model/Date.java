@@ -10,11 +10,19 @@ public class Date {
     private int minute;
 
     public Date(int year, int month, int day, int hour, int minute) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.hour = hour;
-        this.minute = minute;
+        setYear(year);
+        setMonth(month);
+        setDay(day);
+        setHour(hour);
+        setMinute(minute);
+    }
+
+    public Date(String date) {
+        this(Integer.parseInt(date.substring(0, 4)),
+                Integer.parseInt(date.substring(5, 7)),
+                Integer.parseInt(date.substring(8, 10)),
+                Integer.parseInt(date.substring(11, 13)),
+                Integer.parseInt(date.substring(14, 16)));
     }
 
     public static Date getInstance() {
@@ -28,7 +36,8 @@ public class Date {
     }
 
     public String getDate() {
-        return "%d:%d %d/%d/%d".formatted(hour, minute, day, month, year);
+        //YYYY-MM-DD HH:MM:SS
+        return "%d-%d-%d %d:%d:00".formatted(year, month, day, hour, minute);
     }
 
     public int getYear() {
