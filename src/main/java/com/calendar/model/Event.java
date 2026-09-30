@@ -4,15 +4,17 @@ public class Event {
     private String title;
     private String description;
     private String location;
-    private Date date;
+    private Date startDate;
+    private Date endDate;
     private boolean repeat;
 
-    public Event(String title, String description, String location, Date date, boolean repeat) {
-        this.title = title;
-        this.description = description;
-        this.location = location;
-        this.date = date;
-        this.repeat = repeat;
+    public Event(String title, String description, String location, Date startDate, Date endDate, boolean repeat) {
+        setTitle(title);
+        setDescription(description);
+        setLocation(location);
+        setStartDate(startDate);
+        setEndDate(endDate);
+        setRepeat(repeat);
     }
 
     public String getTitle() {
@@ -27,8 +29,16 @@ public class Event {
         return location;
     }
 
-    public Date getCalendar() {
-        return date;
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public String getCalendar() {
+        return startDate.getDate() + "/" + endDate.getDate();
     }
 
     public void setTitle(String title) {
@@ -43,8 +53,12 @@ public class Event {
         this.location = location;
     }
 
-    public void setCalendar(Date date) {
-        this.date = date;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public boolean isRepeat() {
