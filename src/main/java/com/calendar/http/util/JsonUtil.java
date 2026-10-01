@@ -1,8 +1,48 @@
 package com.calendar.http.util;
 
+import com.calendar.exception.BadRequestException;
+import com.calendar.model.Event;
+
+import java.util.*;
+
 public final class JsonUtil {
     private JsonUtil() {
 
+    }
+
+    public static Map<String, String> parseFlatObject(String json) {
+        if (json == null) {
+            throw new BadRequestException("JSON body required.");
+        }
+
+        String trimmedJson = json.trim();
+        if (trimmedJson.isEmpty()) {
+            throw new BadRequestException("JSON body required.");
+        }
+        if (!trimmedJson.startsWith("{") || !trimmedJson.endsWith("}")) {
+            throw new BadRequestException("JSON invalid.");
+        }
+
+        String content = trimmedJson.substring(1, trimmedJson.length() - 1).trim();
+        Map<String, String> values = new LinkedHashMap<>();
+        if (content.isEmpty()) {
+            return values;
+        }
+
+        List<String> pairs = splitTopLevel(content);
+        for (String pair : pairs) {
+            int colonIndex = findColonOutsideQuotes(pair);
+            if (colonIndex <= 0) {
+                throw new BadRequestException("JSON invalid.");
+            }
+
+            String rawKey = pair.substring(0, colonIndex).trim();
+            String rawValue = pair.substring(colonIndex + 1).trim();
+            String key = parseQuotedString(rawKey);
+            String value = parseValue(rawValue);
+            values.put(key, value);
+        }
+        return values;
     }
 
     public static String object(String key, String value) {
@@ -19,5 +59,158 @@ public final class JsonUtil {
                 .replace("\"", "\\\"")
                 .replace("\n", "\\n")
                 .replace("\r", "\\r");
+    }
+
+    public static String event(Event event) {
+        return "{"
+                + "\"id\":" + "\""+event.getId() + "\","
+                + "\"title\":\"" + escape(event.getTitle()) + "\","
+                + "\"description\":" + event.getDescription() + ","
+                + "\"locate\":\"" + event.getLocation() + "\","
+                + "\"start_date\":\"" + event.getStartDate() + "\","
+                + "\"end_date\":\"" + event.getEndDate() + "\","
+                + "\"is_repeated\":" + event.isRepeat()
+                + "}";
+    }
+
+    public static String events(List<Event> events) {
+        StringJoiner joiner = new StringJoiner(",", "[", "]");
+        for (Event event : events) {
+            joiner.add(event(event));
+        }
+        return joiner.toString();
+    }
+
+    private static List<String> splitTopLevel(String content) {
+        List<String> parts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+        boolean escaped = false;
+
+        for (int i = 0; i < content.length(); i++) {
+            char currentChar = content.charAt(i);
+            if (escaped) {
+                current.append(currentChar);
+                escaped = false;
+                continue;
+            }
+            if (currentChar == '\\') {
+                current.append(currentChar);
+                escaped = true;
+                continue;
+            }
+            if (currentChar == '"') {
+                inQuotes = !inQuotes;
+                current.append(currentChar);
+                continue;
+            }
+            if (currentChar == ',' && !inQuotes) {
+                parts.add(current.toString().trim());
+                current.setLength(0);
+                continue;
+            }
+            current.append(currentChar);
+        }
+
+        if (inQuotes || escaped) {
+            throw new BadRequestException("JSON invalid.");
+        }
+
+        parts.add(current.toString().trim());
+        return parts;
+    }
+
+    private static int findColonOutsideQuotes(String pair) {
+        boolean inQuotes = false;
+        boolean escaped = false;
+
+        for (int i = 0; i < pair.length(); i++) {
+            char currentChar = pair.charAt(i);
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            if (currentChar == '\\') {
+                escaped = true;
+                continue;
+            }
+            if (currentChar == '"') {
+                inQuotes = !inQuotes;
+                continue;
+            }
+            if (currentChar == ':' && !inQuotes) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static String parseQuotedString(String rawValue) {
+        String trimmedValue = rawValue.trim();
+        if (trimmedValue.length() < 2 || trimmedValue.charAt(0) != '"'
+                || trimmedValue.charAt(trimmedValue.length() - 1) != '"') {
+            throw new BadRequestException("JSON invalid.");
+        }
+        return unescape(trimmedValue.substring(1, trimmedValue.length() - 1));
+    }
+
+    private static String parseValue(String rawValue) {
+        String trimmedValue = rawValue.trim();
+        if (trimmedValue.startsWith("\"")) {
+            return parseQuotedString(trimmedValue);
+        }
+        if ("null".equals(trimmedValue)) {
+            return null;
+        }
+        if (trimmedValue.matches("-?\\d+(\\.\\d+)?")) {
+            return trimmedValue;
+        }
+        if ("true".equals(trimmedValue) || "false".equals(trimmedValue)) {
+            return trimmedValue;
+        }
+        throw new BadRequestException("JSON invalid.");
+    }
+
+    private static String unescape(String value) {
+        StringBuilder builder = new StringBuilder();
+        boolean escaped = false;
+
+        for (int i = 0; i < value.length(); i++) {
+            char currentChar = value.charAt(i);
+            if (escaped) {
+                switch (currentChar) {
+                    case '"':
+                    case '\\':
+                    case '/':
+                        builder.append(currentChar);
+                        break;
+                    case 'n':
+                        builder.append('\n');
+                        break;
+                    case 'r':
+                        builder.append('\r');
+                        break;
+                    case 't':
+                        builder.append('\t');
+                        break;
+                    default:
+                        throw new BadRequestException("JSON invalid.");
+                }
+                escaped = false;
+                continue;
+            }
+
+            if (currentChar == '\\') {
+                escaped = true;
+            } else {
+                builder.append(currentChar);
+            }
+        }
+
+        if (escaped) {
+            throw new BadRequestException("JSON invalid.");
+        }
+
+        return builder.toString();
     }
 }
