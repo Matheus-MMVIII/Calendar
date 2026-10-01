@@ -65,7 +65,7 @@ public final class JsonUtil {
         return "{"
                 + "\"id\":" + "\""+event.getId() + "\","
                 + "\"title\":\"" + escape(event.getTitle()) + "\","
-                + "\"description\":" + event.getDescription() + ","
+                + "\"description\":\"" + event.getDescription() + "\","
                 + "\"locate\":\"" + event.getLocation() + "\","
                 + "\"start_date\":\"" + event.getStartDate() + "\","
                 + "\"end_date\":\"" + event.getEndDate() + "\","
