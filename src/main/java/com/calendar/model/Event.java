@@ -1,6 +1,7 @@
 package com.calendar.model;
 
 public class Event {
+    private int id;
     private String title;
     private String description;
     private String location;
@@ -8,13 +9,28 @@ public class Event {
     private Date endDate;
     private boolean repeat;
 
-    public Event(String title, String description, String location, Date startDate, Date endDate, boolean repeat) {
+    public Event(int id, String title, String description, String location, String startDate, String endDate, boolean repeat) {
+        setId(id);
+        setTitle(title);
+        setDescription(description);
+        setLocation(location);
+        setStartDate(new Date(startDate));
+        setEndDate(new Date(endDate));
+        setRepeat(repeat);
+    }
+
+    public Event(int id, String title, String description, String location, Date startDate, Date endDate, boolean repeat) {
+        setId(id);
         setTitle(title);
         setDescription(description);
         setLocation(location);
         setStartDate(startDate);
         setEndDate(endDate);
         setRepeat(repeat);
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -39,6 +55,10 @@ public class Event {
 
     public String getCalendar() {
         return startDate.getDate() + "/" + endDate.getDate();
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {
