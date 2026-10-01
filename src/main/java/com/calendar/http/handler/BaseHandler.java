@@ -1,15 +1,19 @@
 package com.calendar.http.handler;
 
 import com.calendar.exception.ApiException;
+import com.calendar.exception.BadRequestException;
 import com.calendar.http.util.JsonUtil;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Locale;
 
 public abstract class BaseHandler implements HttpHandler {
     @Override
@@ -31,8 +35,9 @@ public abstract class BaseHandler implements HttpHandler {
         }*/ catch (IllegalArgumentException ex) {
             sendJson(exchange, 400, JsonUtil.error(ex.getMessage()));
         } catch (Exception ex) {
+            System.out.println(ex);
             System.err.println(ex.getMessage());
-            sendJson(exchange, 500, "Internal server error.");
+            sendJson(exchange, 500, ex.getMessage());
         } finally {
             exchange.close();
         }
@@ -63,5 +68,33 @@ public abstract class BaseHandler implements HttpHandler {
     protected static void sendMethodNotAllowed(HttpExchange exchange, String allowedMethods) throws IOException {
         exchange.getResponseHeaders().set("Allow", allowedMethods);
         sendJson(exchange, 405, JsonUtil.error("This method is not permitted."));
+    }
+
+    protected String requireJsonBody(HttpExchange exchange) throws IOException {
+        String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
+        if (contentType == null || !contentType.toLowerCase(Locale.ROOT).contains("application/json")) {
+            throw new BadRequestException("Content-Type must be application/json.");
+        }
+        return readRequestBody(exchange);
+    }
+
+    public static String readRequestBody(HttpExchange exchange) throws IOException {
+        int maxBytes = 4096;
+        try (InputStream inputStream = exchange.getRequestBody();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            int totalBytes = 0;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                totalBytes += bytesRead;
+                if (totalBytes > maxBytes) {
+                    throw new BadRequestException("The request body exceeds the allowed limit.");
+                }
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            return outputStream.toString(StandardCharsets.UTF_8);
+        }
     }
 }
