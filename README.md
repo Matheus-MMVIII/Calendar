@@ -12,6 +12,21 @@ This is a calendar template to create API HTTP using java and postgres to save d
 - `src/main/java/com/calendar/repository`: Access to bank
 - `src/main/java/com/calendar/service`: Rules and validation
 
+## How to run
+
+### Docker Compose
+
+For run API + PostgreSQL with normal variables:
+
+```bash
+docker compose up --build -d app
+```
+
+For down containers:
+
+```bash
+docker compose down
+```
 
 ## Endpoints
 
