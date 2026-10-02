@@ -67,8 +67,8 @@ public final class JsonUtil {
                 + "\"title\":\"" + escape(event.getTitle()) + "\","
                 + "\"description\":\"" + event.getDescription() + "\","
                 + "\"locate\":\"" + event.getLocation() + "\","
-                + "\"start_date\":\"" + event.getStartDate() + "\","
-                + "\"end_date\":\"" + event.getEndDate() + "\","
+                + "\"start_date\":\"" + event.getStartDate().getDate() + "\","
+                + "\"end_date\":\"" + event.getEndDate().getDate() + "\","
                 + "\"is_repeated\":" + event.isRepeat()
                 + "}";
     }

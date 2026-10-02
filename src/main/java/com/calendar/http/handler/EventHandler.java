@@ -21,7 +21,7 @@ public class EventHandler extends BaseHandler {
     protected void handleRequest(HttpExchange exchange) throws Exception {
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
             List<Event> events = eventService.listAll();
-            sendJson(exchange, 201, JsonUtil.events(events));
+            sendJson(exchange, 200, JsonUtil.events(events));
             return;
         }
 

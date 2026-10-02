@@ -2,16 +2,10 @@ FROM eclipse-temurin:25-jdk AS build
 
 WORKDIR /app
 
+COPY lib ./lib
 COPY src ./src
 
-RUN apt-get update && \
-    apt-get install -y curl && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN mkdir -p lib out && \
-    curl -L \
-    https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.13/postgresql-42.7.13.jar \
-    -o lib/postgresql.jar
+RUN mkdir -p out
 
 RUN javac -cp "lib/*" \
     -d out \
