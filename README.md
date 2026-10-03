@@ -44,8 +44,8 @@ docker compose down
   "title":"Lear Java",
   "description":"",
   "locate":"Home",
-  "start_date":"2026-10-01 14:00",
-  "end_date":"2026-10-01 17:00",
+  "start_date":"2026-10-01 14:00:00",
+  "end_date":"2026-10-01 17:00:00",
   "is_repeated":true
 }
 ```
