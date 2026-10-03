@@ -1,25 +1,33 @@
 package com.calendar.model;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Event {
+
+    private static final DateTimeFormatter FORMARTTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     private int id;
     private String title;
     private String description;
     private String location;
-    private Date startDate;
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private boolean repeat;
 
-    public Event(int id, String title, String description, String location, String startDate, String endDate, boolean repeat) {
+    public Event(int id, String title, String description, String location,
+                 String startDate, String endDate, boolean repeat) {
         setId(id);
         setTitle(title);
         setDescription(description);
         setLocation(location);
-        setStartDate(new Date(startDate));
-        setEndDate(new Date(endDate));
+        setStartDate(startDate);
+        setEndDate(endDate);
         setRepeat(repeat);
     }
 
-    public Event(int id, String title, String description, String location, Date startDate, Date endDate, boolean repeat) {
+    public Event(int id, String title, String description, String location,
+                 LocalDateTime startDate, LocalDateTime endDate, boolean repeat) {
         setId(id);
         setTitle(title);
         setDescription(description);
@@ -45,16 +53,24 @@ public class Event {
         return location;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
+    public String getStringStartDate() {
+        return startDate.format(FORMARTTER);
+    }
+
+    public String getStringEndDate() {
+        return endDate.format(FORMARTTER);
+    }
+
     public String getCalendar() {
-        return startDate.getDate() + "/" + endDate.getDate();
+        return startDate.format(FORMARTTER) + "/" + endDate.format(FORMARTTER);
     }
 
     public void setId(int id) {
@@ -73,12 +89,20 @@ public class Event {
         this.location = location;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = LocalDateTime.parse(startDate, FORMARTTER);
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = LocalDateTime.parse(endDate, FORMARTTER);
     }
 
     public boolean isRepeat() {

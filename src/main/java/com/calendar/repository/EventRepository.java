@@ -15,8 +15,8 @@ public class EventRepository {
             statement.setString(1, event.getTitle());
             statement.setString(2, event.getDescription());
             statement.setString(3, event.getLocation());
-            statement.setTimestamp(4, Timestamp.valueOf(event.getStartDate().getDate()));
-            statement.setTimestamp(5, Timestamp.valueOf(event.getEndDate().getDate()));
+            statement.setObject(4, event.getStartDate());
+            statement.setObject(5, event.getEndDate());
             statement.setBoolean(6, event.isRepeat());
             statement.executeUpdate();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
