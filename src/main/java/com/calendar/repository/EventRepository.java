@@ -5,6 +5,7 @@ import com.calendar.model.Event;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EventRepository {
 
@@ -32,6 +33,19 @@ public class EventRepository {
             }
         }
         throw new SQLException("Failure to generate event identifier. ");
+    }
+
+    public Optional<Event> findById(Connection connection, int id) throws SQLException {
+        String sql = "SELECT * GROM event WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(mapRow(resultSet));
+                }
+                return Optional.empty();
+            }
+        }
     }
 
     public List<Event> listAll(Connection connection) throws SQLException {

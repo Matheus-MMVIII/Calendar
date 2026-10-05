@@ -27,6 +27,12 @@ public class EventHandler extends BaseHandler {
             return;
         }
 
+        if ("GET".equalsIgnoreCase(exchange.getRequestMethod()) && id != -1) {
+            Event event = eventService.findById(id);
+            sendJson(exchange, 200, JsonUtil.event(event));
+            return;
+        }
+
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
             Map<String, String> payload = JsonUtil.parseFlatObject(requireJsonBody(exchange));
             Event createdEvent = eventService.create(payload);

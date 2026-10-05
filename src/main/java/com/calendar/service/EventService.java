@@ -1,6 +1,7 @@
 package com.calendar.service;
 
 import com.calendar.config.DatabaseConfig;
+import com.calendar.exception.NotFoundException;
 import com.calendar.model.Event;
 import com.calendar.repository.EventRepository;
 
@@ -28,6 +29,13 @@ public class EventService {
         try (Connection connection = DatabaseConfig.getConnection()) {
             return eventRepository.insert(connection,
                     new Event(-1, title, description, location, start_date, end_date, is_repeated));
+        }
+    }
+
+    public Event findById(int id) throws SQLException {
+        try (Connection connection = DatabaseConfig.getConnection()) {
+            return eventRepository.findById(connection, id)
+                    .orElseThrow(() -> new NotFoundException("Event not found. "));
         }
     }
 
