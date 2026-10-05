@@ -97,4 +97,31 @@ public abstract class BaseHandler implements HttpHandler {
             return outputStream.toString(StandardCharsets.UTF_8);
         }
     }
+
+    protected int extractIdFromPath(HttpExchange exchange, String basePath) {
+        String path = exchange.getRequestURI().getPath();
+
+        if (path.equals(basePath) || path.equals(basePath + "/")) {
+            return -1;
+        }
+
+        if (!path.startsWith(basePath + "/")) {
+            throw new BadRequestException("Route invalid. ");
+        }
+
+        String idSegment = path.substring(basePath.length() + 1);
+        if (idSegment.contains("/")) {
+            throw new BadRequestException("Route invalid. ");
+        }
+
+        try {
+            int id = Integer.parseInt(idSegment);
+            if (id <= 0) {
+                throw new NumberFormatException();
+            }
+            return id;
+        } catch (NumberFormatException ex) {
+            throw new BadRequestException("Identifier invalid. ");
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.calendar.repository;
 
-import com.calendar.model.Date;
 import com.calendar.model.Event;
 
 import java.sql.*;

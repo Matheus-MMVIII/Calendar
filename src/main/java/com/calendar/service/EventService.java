@@ -1,13 +1,11 @@
 package com.calendar.service;
 
 import com.calendar.config.DatabaseConfig;
-import com.calendar.model.Date;
 import com.calendar.model.Event;
 import com.calendar.repository.EventRepository;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
