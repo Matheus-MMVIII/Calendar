@@ -36,7 +36,7 @@ public class EventRepository {
     }
 
     public Optional<Event> findById(Connection connection, int id) throws SQLException {
-        String sql = "SELECT * GROM event WHERE id = ?";
+        String sql = "SELECT * FROM event WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {

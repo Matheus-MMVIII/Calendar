@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EventHandler extends BaseHandler {
-    private static final String BASE_PATH = "/api/event";
+    private static final String BASE_PATH = "/api/events";
 
     private final EventService eventService;
 

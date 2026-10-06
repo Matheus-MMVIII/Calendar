@@ -106,12 +106,12 @@ public abstract class BaseHandler implements HttpHandler {
         }
 
         if (!path.startsWith(basePath + "/")) {
-            throw new BadRequestException("Route invalid. ");
+            throw new BadRequestException("Route invalid. 1");
         }
 
         String idSegment = path.substring(basePath.length() + 1);
         if (idSegment.contains("/")) {
-            throw new BadRequestException("Route invalid. ");
+            throw new BadRequestException("Route invalid. 2");
         }
 
         try {
