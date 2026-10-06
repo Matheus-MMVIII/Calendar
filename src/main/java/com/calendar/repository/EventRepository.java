@@ -61,6 +61,14 @@ public class EventRepository {
         }
     }
 
+    public boolean delete(Connection connection, int id) throws SQLException {
+        String sql = "DELETE FROM event WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            return statement.executeUpdate() > 0;
+        }
+    }
+
     private Event mapRow(ResultSet resultSet) throws SQLException {
         return new Event(
                 resultSet.getInt("id"),

@@ -44,4 +44,10 @@ public class EventService {
             return eventRepository.listAll(connection);
         }
     }
+
+    public boolean delete(int id) throws SQLException {
+        try (Connection connection = DatabaseConfig.getConnection()) {
+            return eventRepository.delete(connection, id);
+        }
+    }
 }

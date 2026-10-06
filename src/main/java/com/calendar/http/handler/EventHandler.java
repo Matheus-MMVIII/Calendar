@@ -40,6 +40,12 @@ public class EventHandler extends BaseHandler {
             return;
         }
 
-        sendMethodNotAllowed(exchange, "GET, POST, OPTIONS");
+        if ("DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {
+            eventService.delete(id);
+            sendNoContent(exchange);
+            return;
+        }
+
+        sendMethodNotAllowed(exchange, "GET, POST, DELETE, OPTIONS");
     }
 }
