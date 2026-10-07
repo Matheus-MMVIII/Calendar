@@ -33,6 +33,8 @@ docker compose down
 - `GET /health`
 - `GET /api/events`
 - `POST /api/products`
+- `UPDATE /api/products`
+- `DELETE /api/products`
 
 
 ## JSON example

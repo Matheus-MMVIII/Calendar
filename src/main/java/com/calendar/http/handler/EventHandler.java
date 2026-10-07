@@ -40,12 +40,18 @@ public class EventHandler extends BaseHandler {
             return;
         }
 
+        if ("UPDATE".equalsIgnoreCase(exchange.getRequestMethod())) {
+            Map<String, String> payload = JsonUtil.parseFlatObject(readRequestBody(exchange));
+            Event eventUpdated = eventService.update(payload, id);
+            sendJson(exchange, 200, JsonUtil.event(eventUpdated));
+        }
+
         if ("DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {
             eventService.delete(id);
             sendNoContent(exchange);
             return;
         }
 
-        sendMethodNotAllowed(exchange, "GET, POST, DELETE, OPTIONS");
+        sendMethodNotAllowed(exchange, "GET, POST, UPDATE, DELETE, OPTIONS");
     }
 }

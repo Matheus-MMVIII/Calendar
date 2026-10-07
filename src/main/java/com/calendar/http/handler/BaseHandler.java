@@ -28,11 +28,15 @@ public abstract class BaseHandler implements HttpHandler {
         try {
             handleRequest(exchange);
         } catch (ApiException ex) {
+            System.out.println(ex);
+            System.err.println(ex.getMessage());
             sendJson(exchange, ex.getStatusCode(), JsonUtil.error(ex.getMessage()));
         }/* catch (SQLException ex) {
             System.err.println(ex.getMessage());
             sendJson(exchange, 500, JsonUtil.error("Internal error accessing the database."));
         }*/ catch (IllegalArgumentException ex) {
+            System.out.println(ex);
+            System.err.println(ex.getMessage());
             sendJson(exchange, 400, JsonUtil.error(ex.getMessage()));
         } catch (Exception ex) {
             System.out.println(ex);

@@ -1,5 +1,6 @@
 package com.calendar.repository;
 
+import com.calendar.exception.NotFoundException;
 import com.calendar.model.Event;
 
 import java.sql.*;
@@ -58,6 +59,26 @@ public class EventRepository {
                 }
                 return eventList;
             }
+        }
+    }
+
+    public Event update(Connection connection, Event event) throws SQLException {
+        String sql = "UPDATE event SET title = ?, description = ?, location = ?, start_date = ?, end_date = ?, is_repeated = ? WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, event.getTitle());
+            statement.setString(2, event.getDescription());
+            statement.setString(3, event.getLocation());
+            statement.setObject(4, event.getStartDate());
+            statement.setObject(5, event.getEndDate());
+            statement.setBoolean(6, event.isRepeat());
+            statement.setInt(7, event.getId());
+
+            int rowUpdated = statement.executeUpdate();
+
+            if (rowUpdated == 0) {
+                throw new NotFoundException("Event not found: "+event.getId());
+            }
+            return event;
         }
     }
 
